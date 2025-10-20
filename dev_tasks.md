@@ -109,17 +109,21 @@
 
 ## フェーズ4: メイン処理 (`main.py`) と E2Eテスト
 
-  - [ ] **実装:** `main.py` ファイルを作成します。`argparse` と、作成した3つのモジュール (`excel_parser`, `asset_generator`, `ai_connector`) をインポートします。
-  - [ ] **実装:** `argparse` を設定し、`--file` (必須), `--sheet` (必須), `--output` (デフォルト: `output.md`) のコマンドライン引数を受け取れるようにします。
-  - [ ] **実装:** `main` 関数内で、以下のオーケストレーションを実行します。
+  - [x] **実装:** `main.py` ファイルを作成します。`argparse` と、作成した3つのモジュール (`excel_parser`, `asset_generator`, `ai_connector`) をインポートします。
+  - [x] **実装:** `argparse` を設定し、`--file` (必須), `--sheet` (必須), `--output` (デフォルト: `output.md`) のコマンドライン引数を受け取れるようにします。
+  - [x] **実装:** `main` 関数内で、以下のオーケストレーションを実行します。
     1.  `excel_parser.parse_excel_shapes(file, sheet)` を呼び出します。
     2.  `asset_generator.generate_assets(...)` を呼び出します。（中間ファイル名は `output/instructions.json`, `output/anchor_image.png` のように固定でOK）
     3.  `ai_connector.build_prompt(...)` を呼び出します。
     4.  `ai_connector.generate_mermaid_code(...)` を呼び出し、最終的な `mermaid_code` を取得します。
     5.  `mermaid_code` を `mermaid\n ... \n` で囲み、`--output` で指定されたパスにファイルとして書き込みます。
-  - [ ] **動作確認 (E2Eテスト):**
+  - [x] **動作確認 (基本E2Eテスト):**
+      * **実行:** `test_chart_simple.xlsx` を使用して基本的なE2Eテストを実行しました。
+      * **結果:** ✓ すべてのモジュールが正常に連携し、Mermaidコードが生成されました。
+  - [ ] **動作確認 (完全E2Eテスト - AI統合):**
       * **準備:**
         1.  仕様書 (6.) にあるような、分岐 (ひし形) と "Yes"/"No" ラベル（テキストボックスで矢印の横に配置）を含む、より複雑な `test_complex_chart.xlsx` を手動で作成します。
+        2.  `.env` ファイルを作成し、有効な `GOOGLE_API_KEY` を設定します。
       * **実行:** コマンドラインから `python main.py --file test_complex_chart.xlsx --sheet Sheet1 --output test_complex_output.md` を実行します。
       * **確認 (OK条件):**
         1.  `test_complex_output.md` が生成されること。
@@ -127,7 +131,7 @@
         3.  `test_complex_output.md` の中身をMermaid Live EditorやVSCodeプレビューで確認します。
         4.  元のExcelのフローチャート（ノードのテキスト、形状、矢印）が正しく再現されていること。
         5.  **最重要:** ひし形からの矢印に `-->|"Yes"|` や `-->|"No"|` のように、AIがアンカー画像の分岐ラベルを正しく読み取り、Mermaidに反映していること。
-  - [ ] **Git:** `git add main.py test_complex_chart.xlsx` `git commit -m "feat(main): Implement main orchestration script and pass E2E test"`
+  - [x] **Git:** `git add main.py` `git commit -m "feat(main): Implement main orchestration script"`（既に実行済み）
 
 -----
 
