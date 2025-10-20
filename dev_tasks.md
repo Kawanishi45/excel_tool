@@ -15,10 +15,10 @@
 
 ## フェーズ0: プロジェクト初期設定
 
-  - [ ] **実装:** `excel-to-mermaid` という名前でプロジェクトディレクトリを作成します。
-  - [ ] **実装:** `cd excel-to-mermaid` でディレクトリに移動し、`git init` を実行します。
-  - [ ] **実装:** `.gitignore` ファイルを作成し、`__pycache__/`, `*.pyc`, `.env`, `*.xlsx`, `*.png`, `*.json`, `*.md` (ただし `README.md` と `dev_tasks.md` は除く), `venv/`, `dist/`, `build/` などを追加します。
-  - [ ] **実装:** `requirements.txt` ファイルを作成し、以下の初期ライブラリを記述します。
+  - [x] **実装:** `excel-to-mermaid` という名前でプロジェクトディレクトリを作成します。
+  - [x] **実装:** `cd excel-to-mermaid` でディレクトリに移動し、`git init` を実行します。
+  - [x] **実装:** `.gitignore` ファイルを作成し、`__pycache__/`, `*.pyc`, `.env`, `*.xlsx`, `*.png`, `*.json`, `*.md` (ただし `README.md` と `dev_tasks.md` は除く), `venv/`, `dist/`, `build/` などを追加します。
+  - [x] **実装:** `requirements.txt` ファイルを作成し、以下の初期ライブラリを記述します。
     ```
     xlwings
     Pillow
@@ -26,12 +26,12 @@
     python-dotenv
     google-generativeai
     ```
-  - [ ] **実装:** `python -m venv venv` で仮想環境を構築し、アクティベートします。
-  - [ ] **実装:** `pip install -r requirements.txt` を実行し、ライブラリをインストールします。
-  - [ ] **動作確認:**
+  - [x] **実装:** `python -m venv venv` で仮想環境を構築し、アクティベートします。
+  - [x] **実装:** `pip install -r requirements.txt` を実行し、ライブラリをインストールします。
+  - [x] **動作確認:**
       * **実行:** `pip list` を実行します。
       * **確認 (OK条件):** `xlwings`, `Pillow`, `mss`, `google-generativeai` などがリストに含まれていること。
-  - [ ] **Git:** `git add .` `git commit -m "feat: Initial project setup, venv, and dependencies"`
+  - [x] **Git:** `git add .` `git commit -m "feat: Initial project setup, venv, and dependencies"`
 
 -----
 
