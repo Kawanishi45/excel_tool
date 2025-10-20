@@ -37,17 +37,17 @@
 
 ## フェーズ1: モジュール1 (Excel解析 - `excel_parser.py`)
 
-  - [ ] **実装:** `excel_parser.py` ファイルを作成します。
-  - [ ] **実装:** `xlwings` をインポートし、Excelファイルパスとシート名を引数に取り、`sheet` オブジェクトを取得するメイン関数 `def parse_excel_shapes(file_path, sheet_name):` の骨格を作成します。
-  - [ ] **実装:** (仕様書 4.1.1) `sheet` オブジェクトを受け取り、全シェイプをループ処理し、`temp_id`, `text`, `position` (dict), `shape_type` を含む辞書のリスト `all_shapes` を作成して返す内部関数 `_get_all_shapes(sheet)` を実装します。
-  - [ ] **実装:** (仕様書 4.1.2) `all_shapes` リストを受け取り、`container_shapes` (ノード候補) と `text_shapes` (ラベル候補) の2つのリストに分類する内部関数 `_classify_shapes(all_shapes)` を実装します。
+  - [x] **実装:** `excel_parser.py` ファイルを作成します。
+  - [x] **実装:** `xlwings` をインポートし、Excelファイルパスとシート名を引数に取り、`sheet` オブジェクトを取得するメイン関数 `def parse_excel_shapes(file_path, sheet_name):` の骨格を作成します。
+  - [x] **実装:** (仕様書 4.1.1) `sheet` オブジェクトを受け取り、全シェイプをループ処理し、`temp_id`, `text`, `position` (dict), `shape_type` を含む辞書のリスト `all_shapes` を作成して返す内部関数 `_get_all_shapes(sheet)` を実装します。
+  - [x] **実装:** (仕様書 4.1.2) `all_shapes` リストを受け取り、`container_shapes` (ノード候補) と `text_shapes` (ラベル候補) の2つのリストに分類する内部関数 `_classify_shapes(all_shapes)` を実装します。
       * *ヒント: `container_shapes` は `msoTextBox` や `msoConnector` 以外、`text_shapes` は `text` が空でないか `msoTextBox` のもの。*
-  - [ ] **実装:** (仕様書 4.1.3) `container_shapes` と `text_shapes` を受け取り、座標マッピングを行う内部関数 `_map_text_to_containers(container_shapes, text_shapes)` を実装します。
+  - [x] **実装:** (仕様書 4.1.3) `container_shapes` と `text_shapes` を受け取り、座標マッピングを行う内部関数 `_map_text_to_containers(container_shapes, text_shapes)` を実装します。
       * **Logic A:** まず、コンテナ自身が有効なテキストを持っているか（`container['text']` が空でない）をチェックします。
       * **Logic B:** Logic AがFalseの場合のみ、`text_shapes` を走査し、テキストシェイプの**中心座標**がコンテナの `position` 範囲内に含まれるかを判定します。
       * **紐付け:** 含まれるテキストシェイプを発見した場合、`container['text']` をそのテキストで上書きし、そのテキストシェイプは以降の検索対象から除外します（重複防止）。
-  - [ ] **実装:** `parse_excel_shapes` のメインロジックを完成させます。`_get_all_shapes` -\> `_classify_shapes` -\> `_map_text_to_containers` の順で呼び出し、最終的にテキストがマッピングされた `container_shapes` のリストを返すようにします。
-  - [ ] **動作確認:**
+  - [x] **実装:** `parse_excel_shapes` のメインロジックを完成させます。`_get_all_shapes` -\> `_classify_shapes` -\> `_map_text_to_containers` の順で呼び出し、最終的にテキストがマッピングされた `container_shapes` のリストを返すようにします。
+  - [x] **動作確認:**
       * **準備:** 以下の3つのノードと矢印を持つ `test_chart_simple.xlsx` を手動で作成します。
         1.  「開始」というテキストが *内部に* ある角丸四角形。
         2.  「処理A」というテキストが *内部に* ある四角形。
@@ -58,42 +58,42 @@
         2.  1番目の要素が `text: "開始"` を持っていること。
         3.  2番目の要素が `text: "処理A"` を持っていること。
         4.  3番目の要素が `text: "処理Bのラベル"` を持っていること（座標マッピングが成功）。
-  - [ ] **Git:** `git add excel_parser.py test_parser.py test_chart_simple.xlsx` `git commit -m "feat(parser): Implement Module 1 for Excel shape and text mapping"`
+  - [x] **Git:** `git add excel_parser.py test_parser.py test_chart_simple.xlsx` `git commit -m "feat(parser): Implement Module 1 for Excel shape and text mapping"`
 
 -----
 
 ## フェーズ2: モジュール2 (資材生成 - `asset_generator.py`)
 
-  - [ ] **実装:** `asset_generator.py` ファイルを作成します。`Pillow (PIL)` (Image, ImageDraw, ImageFont) と `mss`, `json` をインポートします。
-  - [ ] **実装:** (仕様書 4.2.1) モジュール1の出力 (`mapped_containers`) を受け取り、`id` (例: `node_001`) を割り振り、仕様書通りのJSON (`instructions.json`) を生成して保存する関数 `generate_json_instructions(mapped_containers, output_path)` を実装します。この関数は、JSONデータ（Pythonのリスト）も返すようにします。
-  - [ ] **実装:** (仕様書 4.2.2.a) Excelファイルパスとシート名を引数に取り、対象領域のスクリーンショットを `temp_original.png` として保存する関数 `_get_chart_screenshot(file_path, sheet_name)` を実装します。（`xlwings` の `range.to_png` または `mss` を使用）
-  - [ ] **実装:** (仕様書 4.2.2.b/c/d) `_get_chart_screenshot` で得た画像パスと、`generate_json_instructions` で得たJSONデータを引数に取り、IDアンカー画像を生成する関数 `generate_anchor_image(original_image_path, instructions_json, output_path)` を実装します。
+  - [x] **実装:** `asset_generator.py` ファイルを作成します。`Pillow (PIL)` (Image, ImageDraw, ImageFont) と `mss`, `json` をインポートします。
+  - [x] **実装:** (仕様書 4.2.1) モジュール1の出力 (`mapped_containers`) を受け取り、`id` (例: `node_001`) を割り振り、仕様書通りのJSON (`instructions.json`) を生成して保存する関数 `generate_json_instructions(mapped_containers, output_path)` を実装します。この関数は、JSONデータ（Pythonのリスト）も返すようにします。
+  - [x] **実装:** (仕様書 4.2.2.a) Excelファイルパスとシート名を引数に取り、対象領域のスクリーンショットを `temp_original.png` として保存する関数 `_get_chart_screenshot(file_path, sheet_name)` を実装します。（`xlwings` の `range.to_png` または `mss` を使用）
+  - [x] **実装:** (仕様書 4.2.2.b/c/d) `_get_chart_screenshot` で得た画像パスと、`generate_json_instructions` で得たJSONデータを引数に取り、IDアンカー画像を生成する関数 `generate_anchor_image(original_image_path, instructions_json, output_path)` を実装します。
       * `Pillow` で元画像を開き、`ImageDraw` を準備します。
       * `instructions_json` をループし、各要素の `position` に基づいて `draw.rectangle()` で白い四角形（マスキング）を描画します。
       * 同じ位置の中心に `draw.text()` で `id` を描画します。
       * **重要:** この処理は、JSONに含まれるノードのみを対象とし、矢印や「Yes/No」ラベル（JSONに含まれないテキスト）はマスキング *しない* ようにします。
       * `output_path` (`anchor_image.png`) に保存します。
-  - [ ] **実装:** これら二つの関数を呼び出すメイン関数 `generate_assets(mapped_containers, excel_file, sheet_name, json_out_path, image_out_path)` を実装します。
-  - [ ] **動作確認:**
+  - [x] **実装:** これら二つの関数を呼び出すメイン関数 `generate_assets(mapped_containers, excel_file, sheet_name, json_out_path, image_out_path)` を実装します。
+  - [x] **動作確認:**
       * **実行:** `test_asset_gen.py` を作成し、`test_chart_simple.xlsx` と `excel_parser` の結果を使って `asset_generator.generate_assets(...)` を呼び出します。
       * **確認 (OK条件):**
         1.  `instructions.json` が生成されること。中身に `id`, `text`, `shape_type`, `position` が含まれていることを確認。
         2.  `anchor_image.png` が生成されること。
         3.  `anchor_image.png` を目視で確認し、元のExcelの図形テキスト部分が白く塗りつぶされ、代わりに `node_001`, `node_002`... とIDが描画されていること。
         4.  図形間の「矢印」が、マスキングされずに *残っている* こと。
-  - [ ] **Git:** `git add asset_generator.py test_asset_gen.py` `git commit -m "feat(assets): Implement Module 2 for JSON and Anchor Image generation"`
+  - [x] **Git:** `git add asset_generator.py test_asset_gen.py` `git commit -m "feat(assets): Implement Module 2 for JSON and Anchor Image generation"`
 
 -----
 
 ## フェーズ3: モジュール3 (AI連携 - `ai_connector.py`)
 
-  - [ ] **実装:** `ai_connector.py` ファイルを作成します。`google.generativeai` (または `openai`), `os`, `json`, `PIL.Image` をインポートし、`load_dotenv()` で環境変数を読み込みます。
-  - [ ] **実装:** (仕様書 4.3.2) `instructions.json` ファイルパスと `anchor_image.png` ファイルパスを引数に取り、仕様書 (4.3.2) 通りの**プロンプト文字列**と**画像オブジェクト**を生成する関数 `build_prompt(json_path, image_path)` を実装します。
+  - [x] **実装:** `ai_connector.py` ファイルを作成します。`google.generativeai` (または `openai`), `os`, `json`, `PIL.Image` をインポートし、`load_dotenv()` で環境変数を読み込みます。
+  - [x] **実装:** (仕様書 4.3.2) `instructions.json` ファイルパスと `anchor_image.png` ファイルパスを引数に取り、仕様書 (4.3.2) 通りの**プロンプト文字列**と**画像オブジェクト**を生成する関数 `build_prompt(json_path, image_path)` を実装します。
       * *ヒント: JSONを読み込み、f-stringを使ってプロンプトテンプレートに埋め込みます。画像は `PIL.Image.open()` で開きます。*
-  - [ ] **実装:** (仕様書 4.3) `build_prompt` の結果（プロンプト文字列と画像オブジェクト）を受け取り、マルチモーダルAI (Gemini) のAPIを呼び出す関数 `generate_mermaid_code(prompt_text, image_object)` を実装します。
+  - [x] **実装:** (仕様書 4.3) `build_prompt` の結果（プロンプト文字列と画像オブジェクト）を受け取り、マルチモーダルAI (Gemini) のAPIを呼び出す関数 `generate_mermaid_code(prompt_text, image_object)` を実装します。
       * APIキーは `os.environ.get('GOOGLE_API_KEY')` などで取得します。
-  - [ ] **実装:** AIからのレスポンス（`response.text`）を受け取り、Markdownのコードブロック (` mermaid ...  `) を除去し、Mermaidコード本体のみをクリーンなテキストとして返す内部関数 `_extract_mermaid_code(raw_response)` を実装し、`generate_mermaid_code` はこのクリーンなコードを返すようにします。
-  - [ ] **動作確認:**
+  - [x] **実装:** AIからのレスポンス（`response.text`）を受け取り、Markdownのコードブロック (` mermaid ...  `) を除去し、Mermaidコード本体のみをクリーンなテキストとして返す内部関数 `_extract_mermaid_code(raw_response)` を実装し、`generate_mermaid_code` はこのクリーンなコードを返すようにします。
+  - [x] **動作確認:**
       * **準備:**
         1.  `.env` ファイルを作成し、`GOOGLE_API_KEY=...` (または使用するAIのキー) を設定します。
         2.  フェーズ2で生成済みの `instructions.json` と `anchor_image.png` を用意します。
@@ -102,8 +102,8 @@
         1.  コンソールに `graph TD ...` で始まるMermaidコードが出力されること。
         2.  `instructions.json` に含まれていた `id` と `text` が、Mermaidのノード定義（例: `node_001(["開始"])`）として含まれていること。
         3.  `anchor_image.png` に描画されていた矢印が、Mermaidの接続（例: `node_001 --> node_002`）として含まれていること。
-  - [ ] **Git:** `git add ai_connector.py test_ai_connector.py .env.example` `git commit -m "feat(ai): Implement Module 3 for AI prompt generation and API call"`
-  - [ ] **クリーンアップ:** `rm test_parser.py test_asset_gen.py test_ai_connector.py` `git rm test_chart_simple.xlsx` `git commit -m "chore: Remove temporary test files"`
+  - [x] **Git:** `git add ai_connector.py test_ai_connector.py .env.example` `git commit -m "feat(ai): Implement Module 3 for AI prompt generation and API call"`
+  - [x] **クリーンアップ:** `rm test_parser.py test_asset_gen.py test_ai_connector.py` `git rm test_chart_simple.xlsx` `git commit -m "chore: Remove temporary test files"`
 
 -----
 
