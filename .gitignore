@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+venv/
+env/
+
+# Environment
+.env
+
+# Excel files
+*.xlsx
+
+# Generated files
+*.png
+*.json
+
+# Keep specific markdown files
+*.md
+!README.md
+!dev_tasks.md
+!dev_spec.md
+!dev_approach.md
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
