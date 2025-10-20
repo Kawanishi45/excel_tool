@@ -4,8 +4,9 @@ AI連携モジュール
 """
 import os
 import json
+import base64
+import requests
 from dotenv import load_dotenv
-import google.generativeai as genai
 from PIL import Image
 
 # 環境変数を読み込み
@@ -103,7 +104,7 @@ def build_prompt(json_path, image_path):
 
 def _call_gemini_api(prompt_text, image_object):
     """
-    Gemini APIを呼び出してMermaidコードを生成する
+    Gemini APIを呼び出してMermaidコードを生成する（REST API版）
 
     Args:
         prompt_text (str): プロンプトテキスト
@@ -120,16 +121,51 @@ def _call_gemini_api(prompt_text, image_object):
             "Please create a .env file with your API key."
         )
 
-    # Gemini APIを設定
-    genai.configure(api_key=api_key)
+    # 画像をbase64エンコード
+    import io
+    buffered = io.BytesIO()
+    image_object.save(buffered, format="PNG")
+    img_base64 = base64.b64encode(buffered.getvalue()).decode('utf-8')
 
-    # マルチモーダルモデルを使用
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    # REST APIエンドポイント
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
 
-    # コンテンツを生成
-    response = model.generate_content([prompt_text, image_object])
+    # リクエストボディ
+    payload = {
+        "contents": [{
+            "parts": [
+                {"text": prompt_text},
+                {
+                    "inline_data": {
+                        "mime_type": "image/png",
+                        "data": img_base64
+                    }
+                }
+            ]
+        }]
+    }
 
-    return response.text
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    # API呼び出し（60秒タイムアウト）
+    try:
+        response = requests.post(url, headers=headers, json=payload, timeout=60)
+        response.raise_for_status()
+
+        result = response.json()
+
+        if 'candidates' in result and len(result['candidates']) > 0:
+            text = result['candidates'][0]['content']['parts'][0]['text']
+            return text
+        else:
+            raise ValueError(f"Unexpected API response format: {json.dumps(result, indent=2)}")
+
+    except requests.exceptions.Timeout:
+        raise TimeoutError("Gemini API request timed out after 60 seconds")
+    except requests.exceptions.RequestException as e:
+        raise RuntimeError(f"Gemini API request failed: {e}")
 
 
 def _extract_mermaid_code(raw_response):
